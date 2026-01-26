@@ -122,39 +122,18 @@
       color: #999;
       font-size: 14px;
     }
-
-    .instructions {
-      background: #fff3e6;
-      border-radius: 8px;
-      border-left: 4px solid #ff5500;
-    }
-
-    .instructions h3 {
-      margin-top: 0;
-      color: #ff5500;
-    }
-
-    .instructions ol {
-      margin: 0;
-      padding-left: 20px;
-      color: #666;
-    }
-
-    .instructions li {
-      margin-bottom: 8px;
-    }
   </style>
 </head>
 
 <body>
 
   <h1>SoundCloud QR Generator</h1>
-  <p class="subtitle">This QR will always link to your dynamic landing page</p>
+  <p class="subtitle">This QR always links to your landing page</p>
 
   <div class="container">
     <div class="input-group">
       <label for="qrLabel">QR Code Label</label>
-      <input type="text" id="qrLabel" value="SCAN FOR MUSIC">
+      <input type="text" id="qrLabel" placeholder="Enter label text">
     </div>
 
     <div class="button-group">
@@ -167,16 +146,6 @@
       <canvas id="finalCanvas" style="display:none;"></canvas>
       <p class="placeholder" id="placeholder">Your QR code will appear here</p>
     </div>
-  </div>
-
-  <div class="container instructions">
-    <h3>How it works</h3>
-    <ol>
-      <li>Enter a label for your QR code</li>
-      <li>Generate the QR image, it points to your site root</li>
-      <li>Save the image</li>
-      <li>Edit index.html later to change the promoted track</li>
-    </ol>
   </div>
 
   <script>
@@ -202,7 +171,7 @@
         const qrCanvas = document.querySelector("#qrcode canvas");
         const ctx = canvas.getContext("2d");
         const padding = 20;
-        const textHeight = 50;
+        const textHeight = label ? 50 : 0;
 
         canvas.width = 300 + padding * 2;
         canvas.height = 300 + textHeight + padding * 2;
@@ -211,10 +180,12 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(qrCanvas, padding, padding, 300, 300);
 
-        ctx.fillStyle = "#000000";
-        ctx.font = "bold 24px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(label || "SCAN FOR BANGER", canvas.width / 2, 300 + padding + 35);
+        if (label) {
+          ctx.fillStyle = "#000000";
+          ctx.font = "bold 24px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(label, canvas.width / 2, 300 + padding + 35);
+        }
 
         canvas.style.display = "block";
         placeholder.style.display = "none";
