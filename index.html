@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redirecting...</title>
 
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <script>
-    const SONG_URL = "https://on.soundcloud.com/wHK5GxGNT7vOWwUfL1";
+    const SONG_URL = "https://on.soundcloud.com/PUT_NEW_LINK_HERE";
+
     window.location.replace(SONG_URL);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const link = document.getElementById("fallbackLink");
+      if (link) link.href = SONG_URL;
+    });
   </script>
 
   <style>
@@ -52,7 +62,7 @@
   <div class="container">
     <div class="spinner"></div>
     <h2>Redirecting to SoundCloud...</h2>
-    <p>If you are not redirected automatically, <a href="https://on.soundcloud.com/wHK5GxGNT7vOWwUfL1">click here</a>.</p>
+    <p>If you are not redirected automatically, <a id="fallbackLink" href="#">click here</a>.</p>
   </div>
 </body>
 </html>
