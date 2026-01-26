@@ -56,9 +56,17 @@
 
   <script>
     (function() {
-      var configUrl = "config.json?t=" + Date.now();
+      var bustCache = Date.now() + "-" + Math.random().toString(36).substring(2);
+      var configUrl = "config.json?v=" + bustCache;
       
-      fetch(configUrl, { cache: "no-store" })
+      fetch(configUrl, {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache"
+        }
+      })
         .then(function(response) {
           return response.json();
         })
@@ -73,7 +81,6 @@
           window.location.replace(redirectUrl);
         })
         .catch(function() {
-          // Fallback if config fetch fails
           var fallback = "https://soundcloud.com/";
           window.location.replace(fallback);
         });
