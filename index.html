@@ -9,24 +9,6 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <script>
-    const SONG_URL = "https://on.soundcloud.com/a2JjIhycRVIs88SxB5";
-
-    (function() {
-      var sep = SONG_URL.indexOf("?") !== -1 ? "&" : "?";
-      var redirectUrl = SONG_URL + sep + "t=" + Date.now();
-      window.location.replace(redirectUrl);
-    })();
-
-    document.addEventListener("DOMContentLoaded", function() {
-      var link = document.getElementById("fallbackLink");
-      if (link) {
-        var sep = SONG_URL.indexOf("?") !== -1 ? "&" : "?";
-        link.href = SONG_URL + sep + "t=" + Date.now();
-      }
-    });
-  </script>
-
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
@@ -69,7 +51,33 @@
   <div class="container">
     <div class="spinner"></div>
     <h2>Redirecting to SoundCloud...</h2>
-    <p>If you are not redirected automatically, <a id="https://on.soundcloud.com/a2JjIhycRVIs88SxB5" href="#">click here</a>.</p>
+    <p>If you are not redirected automatically, <a id="fallbackLink" href="#">click here</a>.</p>
   </div>
+
+  <script>
+    (function() {
+      var configUrl = "config.json?t=" + Date.now();
+      
+      fetch(configUrl, { cache: "no-store" })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(config) {
+          var songUrl = config.songUrl;
+          var sep = songUrl.indexOf("?") !== -1 ? "&" : "?";
+          var redirectUrl = songUrl + sep + "t=" + Date.now();
+          
+          var link = document.getElementById("fallbackLink");
+          if (link) link.href = redirectUrl;
+          
+          window.location.replace(redirectUrl);
+        })
+        .catch(function() {
+          // Fallback if config fetch fails
+          var fallback = "https://soundcloud.com/";
+          window.location.replace(fallback);
+        });
+    })();
+  </script>
 </body>
 </html>
