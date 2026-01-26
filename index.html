@@ -10,9 +10,12 @@
   <meta http-equiv="Expires" content="0">
 
   <script>
-    const SONG_URL = "https://on.soundcloud.com/PUT_NEW_LINK_HERE";
+    const SONG_URL = "https://on.soundcloud.com/PUT_REAL_LINK_HERE";
 
-    window.location.replace(SONG_URL);
+    const sep = SONG_URL.includes("?") ? "&" : "?";
+    const redirectUrl = SONG_URL + sep + "t=" + Date.now();
+
+    window.location.replace(redirectUrl);
 
     document.addEventListener("DOMContentLoaded", () => {
       const link = document.getElementById("fallbackLink");
