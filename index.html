@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SoundCloud QR Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #ff5500;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff5500;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .generate-btn {
+      background: linear-gradient(135deg, #ff5500 0%, #ff8800 100%);
+      color: white;
+    }
+
+    .save-btn {
+      background: #333;
+      color: white;
+    }
+
+    .save-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    #qrcode {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .qr-container {
+      text-align: center;
+      padding: 20px;
+      background: #f8f8f8;
+      border-radius: 12px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    .placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .instructions {
+      background: #fff3e6;
+      border-radius: 8px;
+      border-left: 4px solid #ff5500;
+    }
+
+    .instructions h3 {
+      margin-top: 0;
+      color: #ff5500;
+    }
+
+    .instructions ol {
+      margin: 0;
+      padding-left: 20px;
+      color: #666;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>SoundCloud QR Generator</h1>
+  <p class="subtitle">Create QR codes that link to your tracks</p>
+
+  <div class="container">
+    <div class="input-group">
+      <label for="soundcloudUrl">SoundCloud Link</label>
+      <input type="text" id="soundcloudUrl" placeholder="Paste your SoundCloud track URL here">
+    </div>
+
+    <div class="input-group">
+      <label for="qrLabel">QR Code Label</label>
+      <input type="text" id="qrLabel" value="SCAN FOR BANGER">
+    </div>
+
+    <div class="button-group">
+      <button class="generate-btn" onclick="generateQR()">Generate QR Code</button>
+      <button class="save-btn" id="saveBtn" onclick="saveQR()" disabled>Save Image</button>
+    </div>
+
+    <div class="qr-container">
+      <div id="qrcode"></div>
+      <canvas id="finalCanvas" style="display:none;"></canvas>
+      <p class="placeholder" id="placeholder">Your QR code will appear here</p>
+    </div>
+  </div>
+
+  <div class="container instructions">
+    <h3>How it works</h3>
+    <ol>
+      <li>Paste your SoundCloud track URL</li>
+      <li>Customize the label text</li>
+      <li>Generate the QR code</li>
+      <li>Save the image</li>
+    </ol>
+  </div>
+
+  <script>
+    let qr;
+
+    function generateQR() {
+      const url = document.getElementById("soundcloudUrl").value.trim();
+      const label = document.getElementById("qrLabel").value.trim();
+      const placeholder = document.getElementById("placeholder");
+      const canvas = document.getElementById("finalCanvas");
+      const saveBtn = document.getElementById("saveBtn");
+
+      if (!url) {
+        alert("Please enter a SoundCloud link");
+        return;
+      }
+
+      document.getElementById("qrcode").innerHTML = "";
+
+      qr = new QRCode(document.getElementById("qrcode"), {
+        text: url,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      setTimeout(() => {
+        const qrCanvas = document.querySelector("#qrcode canvas");
+        const ctx = canvas.getContext("2d");
+
+        const padding = 20;
+        const textHeight = 50;
+
+        canvas.width = 300 + padding * 2;
+        canvas.height = 300 + textHeight + padding * 2;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(qrCanvas, padding, padding, 300, 300);
+
+        ctx.fillStyle = "#000000";
+        ctx.font = "bold 24px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(label || "SCAN FOR BANGER", canvas.width / 2, 300 + padding + 35);
+
+        canvas.style.display = "block";
+        placeholder.style.display = "none";
+        saveBtn.disabled = false;
+      }, 300);
+    }
+
+    function saveQR() {
+      const canvas = document.getElementById("finalCanvas");
+      const link = document.createElement("a");
+      link.download = "soundcloud-qr.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
