@@ -12,14 +12,18 @@
   <script>
     const SONG_URL = "https://on.soundcloud.com/wHK5GxGNT7vOWwUfL1";
 
-    const sep = SONG_URL.includes("?") ? "&" : "?";
-    const redirectUrl = SONG_URL + sep + "t=" + Date.now();
+    (function() {
+      var sep = SONG_URL.indexOf("?") !== -1 ? "&" : "?";
+      var redirectUrl = SONG_URL + sep + "t=" + Date.now();
+      window.location.replace(redirectUrl);
+    })();
 
-    window.location.replace(redirectUrl);
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const link = document.getElementById("fallbackLink");
-      if (link) link.href = SONG_URL;
+    document.addEventListener("DOMContentLoaded", function() {
+      var link = document.getElementById("fallbackLink");
+      if (link) {
+        var sep = SONG_URL.indexOf("?") !== -1 ? "&" : "?";
+        link.href = SONG_URL + sep + "t=" + Date.now();
+      }
     });
   </script>
 
@@ -65,7 +69,7 @@
   <div class="container">
     <div class="spinner"></div>
     <h2>Redirecting to SoundCloud...</h2>
-    <p>If you are not redirected automatically, <a id="https://on.soundcloud.com/wHK5GxGNT7vOWwUfL1" href="#">click here</a>.</p>
+    <p>If you are not redirected automatically, <a id="fallbackLink" href="#">click here</a>.</p>
   </div>
 </body>
 </html>
